@@ -16,5 +16,7 @@ A basic cli application to learn fundamentals of dart language. It uses various 
 
 ## Screenshots
 
-![App Screenshot](screenshots/ss1.jpg)
+![Terminal Screenshot](screenshots/ss1.png)
+![](screenshots/ss2.png)
+![](screenshots/ss3.png)
 
