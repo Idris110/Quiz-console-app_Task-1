@@ -6,12 +6,11 @@ class qb {
       "category": "Science: Computers",
       "type": "multiple",
       "difficulty": "medium",
-      "question": "Which coding language was the #1 programming language in terms of usage on GitHub in 2015?",
-      "correct_answer": ["JavaScript"],
+      "question": "(sample) Multiple ans question (correct answers: 20,40)",
+      "correct_answer": ["20","40"],
       "incorrect_answers": [
-        "C#",
-        "Python",
-        "PHP"
+        "10",
+        "30"
       ]
     },
     {

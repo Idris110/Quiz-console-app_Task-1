@@ -5,10 +5,10 @@ import 'QuestionBankJSON.dart' as quesBank;
 import 'QuestionModel.dart' as QuestionBP;
 
 int maxTime = 10; //max time allowed per question in seconds
-int weightage= 1; //max mark for one question (one option)
+int weightage = 1; //max mark for one question (one option)
 
 abstract class Topic {
-  //takes JSON string and returns list of shuffled question according to blueprint
+  //takes JSON string and returns list of shuffled question according to QuestionModel
   List<QuestionBP.Question> loadQuestions(List<dynamic> questions) {
     late List<QuestionBP.Question> questList = [];
 
@@ -36,7 +36,7 @@ abstract class Topic {
     int maxScore = 0, score = 0;
     int quesNo = 0;
 
-    int renderQuest(var questObj) {
+    int renderQuest(var questObj) { //displays question and returns score for each question
       int noOfOpts = questObj.answers.length;
 
       print("\nQ${++quesNo}. ${questObj.question}");
@@ -47,8 +47,9 @@ abstract class Topic {
 
       if (noOfOpts == 0) {
         late int selected;
-        stdout.write("Answer (single choice) : ");
+        stdout.write("Answer (single answer) : ");
         selected = int.parse(stdin.readLineSync()!);
+        maxScore = maxScore + 1;
         if (selected <= 4 &&
             questObj.options[selected - 1] == questObj.answer) {
           // score = correctAns(score);
@@ -58,9 +59,8 @@ abstract class Topic {
           // score = incorrectAns(score);
           print("=> Incorrect Answer");
         }
-        maxScore += 1;
       } else {
-        stdout.write("Answer (multiple choice) : ");
+        stdout.write("Answer (multiple answers) : ");
         List<int> selected = [];
         for (var i = 0; i < noOfOpts; i++) {
           selected.add(int.parse(stdin.readLineSync()!));
@@ -73,6 +73,7 @@ abstract class Topic {
               matched++;
           }
         }
+        maxScore = maxScore + noOfOpts;
         if (matched == noOfOpts) {
           // score = correctAns(score);
           print("=> Correct Answer");
@@ -80,20 +81,18 @@ abstract class Topic {
           // score = incorrectAns(score);
           print("=> ${noOfOpts - matched} incorrect answer");
         }
-        maxScore += noOfOpts;
         return matched;
       }
       return 0;
     }
 
-    for (var questObj in questionList) {
+    for (var questObj in questionList) { // Quiz begins here
       final stopwatch = Stopwatch()..start();
       int scored = renderQuest(questObj);
       int timeTaken = stopwatch.elapsed.inSeconds;
-      if(timeTaken > maxTime){
+      if (timeTaken > maxTime) {
         print("** Exceeded time limit of ${maxTime} secs !");
-      }
-      else{
+      } else {
         score += scored;
       }
     }
@@ -103,15 +102,15 @@ abstract class Topic {
     for (var questObj in questionList) {
       print("\nQ${++quesNo}. ${questObj.question}");
 
-      if(questObj.answers.length == 0)
+      if (questObj.answers.length == 0)
         print("Ans. ${questObj.answer}");
-      else{
+      else {
         for (var ans in questObj.answers) {
-        print("Ans. ${ans}");
+          print("Ans. ${ans}");
         }
       }
     }
-    return {'scored': score*weightage, 'outOf': maxScore*weightage};
+    return {'scored': (score * weightage), 'outOf': (maxScore * weightage)};
   }
 
   Map<String, int> displayQuestions();
@@ -120,7 +119,8 @@ abstract class Topic {
 abstract class Result {
   void getMarks();
 
-  int correctAns(int score); // functions called when option is correct/incorrect
+  int correctAns(
+      int score); // functions called when option is correct/incorrect
   int incorrectAns(int score);
 }
 
@@ -161,11 +161,39 @@ class Math extends Topic implements Result {
   }
 }
 
-class Java {
-  Map<String, dynamic> javaQues = {};
+class Java extends Topic implements Result {
+  var javaQues = json.decode(quesBank.qb.javaQuesJSON)['results'];
 
   Java() {
-    javaQues = json.decode(quesBank.qb.javaQuesJSON) as Map<String, dynamic>;
-    print("inside java");
+    getMarks();
+  }
+
+  @override
+  void getMarks() {
+    Map<String, int> score = displayQuestions();
+
+    print(
+        "\n** Hurray you scored ${score['scored']} out of ${score['outOf']} **\n\n");
+  }
+
+  @override
+  Map<String, int> displayQuestions() {
+    List<QuestionBP.Question> questionList =
+        loadQuestions(javaQues); //renders question from JSON
+    Map<String, int> score = beginQuiz(questionList);
+
+    return score;
+  }
+
+  @override
+  int correctAns(int score) {
+    print("Correct Answer !");
+    return score + 1;
+  }
+
+  @override
+  int incorrectAns(int score) {
+    print("Wrong Answer !");
+    return score;
   }
 }
