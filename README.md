@@ -1,7 +1,7 @@
 
 # Quiz Console App
 
-A basic cli application to learn fundamentals of dart language. It uses various concepts of oops, datatypes, packages and asynchronous Workflows.
+A basic cli application to learn fundamentals of dart language. It uses various concepts of oops, datatypes, packages and asynchronous Workflow.
 
 
 ## Features
